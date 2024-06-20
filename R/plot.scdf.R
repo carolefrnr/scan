@@ -574,6 +574,64 @@ plotSC <- function(data, dvar, pvar, mvar,
             )
           }
         }
+        if (line[["type"]] == "trendTS_A") { #Theil-Sen trend 
+          x <- data[design$start[1]:design$stop[1],mvar]
+          y <- data[design$start[1]:design$stop[1],dvar]
+          n <- length(x)
+          maxMT <- max(data[,mvar])
+          slopes <- as.numeric()
+          ints <- as.numeric()
+          for (i in 1:(n-1)) {
+              for(j in (i+1):n) {
+                  slopes <- c(slopes, ((y[j] - y[i]) / (x[j] - x[i])))
+              }
+          }
+          b <- median(slopes)
+          for (i in 1:n) {
+              ints <- c(ints, (y[i] - (b*x[i])))
+          }
+          a <- median(ints)
+          lines(
+            x = c(min(x), maxMT), 
+            y = c(
+              a + min(x) * b, 
+              a + maxMT * b
+            ), 
+            lty = lty.line, 
+            col = col.line, 
+            lwd = lwd.line
+          )
+        }
+        if (line[["type"]] == "trendTS") { #Theil-Sen trend 
+          for(j in 1:length(design$values)) {
+            x <- data[design$start[j]:design$stop[j],mvar]
+            y <- data[design$start[j]:design$stop[j],dvar]
+            n <- length(x)
+            maxMT <- max(data[,mvar])
+            slopes <- as.numeric()
+            ints <- as.numeric()
+            for (i in 1:(n-1)) {
+                for(j in (i+1):n) {
+                    slopes <- c(slopes, ((y[j] - y[i]) / (x[j] - x[i])))
+                }
+            }
+            b <- median(slopes)
+            for (i in 1:n) {
+                ints <- c(ints, (y[i] - (b*x[i])))
+            }
+            a <- median(ints)
+            lines(
+              x = c(min(x), maxMT), 
+              y = c(
+                a + min(x) * b, 
+                a + maxMT * b
+              ), 
+              lty = lty.line, 
+              col = col.line, 
+              lwd = lwd.line
+            )
+          }
+        }
         if (line[["type"]] == "trendA") {
           x <- data[design$start[1]:design$stop[1],mvar]
           y <- data[design$start[1]:design$stop[1],dvar]
